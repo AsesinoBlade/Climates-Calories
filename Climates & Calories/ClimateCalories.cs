@@ -198,8 +198,8 @@ namespace ClimatesCalories
             mod.SaveDataInterface = instance;
 
             StartGameBehaviour.OnStartGame += ClimatesCalories_OnStartGame;
-            EntityEffectBroker.OnNewMagicRound += ClimatesCaloriesEffects_OnNewMagicRound;
-            EntityEffectBroker.OnNewMagicRound += Hunger.FoodEffects_OnNewMagicRound;
+            //EntityEffectBroker.OnNewMagicRound += ClimatesCaloriesEffects_OnNewMagicRound;
+            //EntityEffectBroker.OnNewMagicRound += Hunger.FoodEffects_OnNewMagicRound;
             EntityEffectBroker.OnNewMagicRound += Camping.OnNewMagicRound_PlaceCamp;
             PlayerEnterExit.OnTransitionInterior += Camping.Destroy_OnTransition;
             PlayerEnterExit.OnTransitionExterior += Camping.Destroy_OnTransition;
@@ -209,7 +209,7 @@ namespace ClimatesCalories
             DaggerfallVidPlayerWindow.OnVideoStart += BoolSet_OnVideoStart;
             DaggerfallVidPlayerWindow.OnVideoEnd += BoolSet_OnVideoEnd;
 
-            GameManager.Instance.RegisterPreventRestCondition(() => { return TooExtremeToRest(); }, "The temperature is too extreme to rest.");
+            //GameManager.Instance.RegisterPreventRestCondition(() => { return TooExtremeToRest(); }, "The temperature is too extreme to rest.");
             UIWindowFactory.RegisterCustomUIWindow(UIWindowType.Tavern, typeof(TavernWindow));
 
             ItemHelper itemHelper = DaggerfallUnity.Instance.ItemHelper;
@@ -695,7 +695,7 @@ namespace ClimatesCalories
                 {
                     if (camping || cooking)
                     {
-                        if (Dice100.SuccessRoll(playerEntity.Stats.LiveLuck + 20))
+                        if (Dice100.SuccessRoll(playerEntity.Stats.LiveLuck + 40))
                             noSpawns = true;
                     }
                     txtCount = txtIntervals;
@@ -1549,7 +1549,7 @@ namespace ClimatesCalories
 
         void MessageReceiver(string message, object data, DFModMessageCallback callBack)
         {
-            Debug.Log("[Climates & Calories] mod message recieved");
+            //Debug.Log("[Climates & Calories] mod message recieved");
             switch (message)
             {
                 case CAMP_POPUP:

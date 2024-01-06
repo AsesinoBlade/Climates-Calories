@@ -71,7 +71,8 @@ namespace ClimatesCalories
             }
             else
             {
-                item.LowerCondition(1, GameManager.Instance.PlayerEntity, collection);
+                if (UnityEngine.Random.Range(0, 100) > 90)
+                    item.LowerCondition(1, GameManager.Instance.PlayerEntity, collection);
                 if (item.currentCondition > 0)
                 {
                     CampDmg = item.maxCondition - item.currentCondition;
@@ -222,7 +223,7 @@ namespace ClimatesCalories
                 IUserInterfaceManager uiManager = DaggerfallUI.UIManager;
                 ClimateCalories.camping = true;
                 ClimateCalories.cooking = false;
-                uiManager.PushWindow(new DaggerfallRestWindow(uiManager, true));
+                uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.Rest, new object[] { uiManager, true }));
             }
             else if (messageBoxButton == cookButton)
             {
