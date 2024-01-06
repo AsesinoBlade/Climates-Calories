@@ -1561,6 +1561,19 @@ namespace ClimatesCalories
                 case EAT_FOOD:
                     playerEntity.LastTimePlayerAteOrDrankAtTavern = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
                     break;
+                case "NewTime":
+                    startRound = true;
+                    Hunger.hungry = false;
+                    attCount = 0;
+                    thirst = 0;
+                    TavernWindow.drunk = 0;
+                    Sleep.sleepyCounter = 0;
+                    playerEntity.LastTimePlayerAteOrDrankAtTavern = (
+                        DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime());
+                    Sleep.wakeOrSleepTime = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+
+                    break;
+
                 case ADD_ITEM:
                     if ((int)data > 530 && (int)data <= 540)
                         playerEntity.Items.AddItem(ItemBuilder.CreateItem(ItemGroups.UselessItems2, (int)data));
