@@ -47,7 +47,8 @@
         "Assets/Game/Mods/Climates-Calories/Hunting.cs",
         "Assets/Game/Mods/Climates-Calories/Camping.cs",
         "Assets/Game/Mods/Climates-Calories/AdviceText.cs",
-        "Assets/Game/Mods/Climates-Calories/ItemsFood.cs"
+        "Assets/Game/Mods/Climates-Calories/ItemsFood.cs",
+        "Assets/Game/Mods/Climates-Calories/modsettings.json"
     ],
     "ModPreCompile": true,
     "Dependencies": [

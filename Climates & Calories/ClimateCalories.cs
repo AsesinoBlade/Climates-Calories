@@ -198,8 +198,8 @@ namespace ClimatesCalories
             mod.SaveDataInterface = instance;
 
             StartGameBehaviour.OnStartGame += ClimatesCalories_OnStartGame;
-            //EntityEffectBroker.OnNewMagicRound += ClimatesCaloriesEffects_OnNewMagicRound;
-            //EntityEffectBroker.OnNewMagicRound += Hunger.FoodEffects_OnNewMagicRound;
+            EntityEffectBroker.OnNewMagicRound += ClimatesCaloriesEffects_OnNewMagicRound;
+            EntityEffectBroker.OnNewMagicRound += Hunger.FoodEffects_OnNewMagicRound;
             EntityEffectBroker.OnNewMagicRound += Camping.OnNewMagicRound_PlaceCamp;
             PlayerEnterExit.OnTransitionInterior += Camping.Destroy_OnTransition;
             PlayerEnterExit.OnTransitionExterior += Camping.Destroy_OnTransition;
@@ -376,9 +376,47 @@ namespace ClimatesCalories
             }
 
             mod.MessageReceiver = MessageReceiver;
+            mod.LoadSettingsCallback = LoadSettings;
+            mod.LoadSettings();
             mod.IsReady = true;
         }
 
+        private void LoadSettings(ModSettings settings, ModSettingsChange change)
+        {
+
+
+            ChanceSpawns = settings.GetValue<bool>("Options", "ChanceSpawns");
+            SpawnLuckMultiplier = settings.GetValue<float>("Options", "SpawnLuckMultiplier");
+
+            CheckHunger = settings.GetValue<bool>("Options", "CheckHunger");
+            HungerMultiplier = settings.GetValue<int>("Options", "HungerMultiplier");
+
+            PenalizeGroundSleep = settings.GetValue<bool>("Options", "PenalizeGroundSleep");
+
+            CheckThirst = settings.GetValue<bool>("Options", "CheckThirst");
+            CheckTemp = settings.GetValue<bool>("Options", "CheckTemp");
+
+            ClothesDamageCheck = settings.GetValue<bool>("Options", "ClothesDamageCheck");
+            ClothesDamageTimeMult = settings.GetValue<int>("Options", "ClothesDamageTimeMult");
+
+            ArmorDamageCheck = settings.GetValue<bool>("Options", "ArmorDamageCheck");
+            ArmorDamageTimeMult = settings.GetValue<int>("Options", "ArmorDamageTimeMult");
+
+            NakedDamageCheck = settings.GetValue<bool>("Options", "NakedDamageCheck");
+
+            FatiqueAffectsHealth = settings.GetValue<bool>("Options", "FatiqueAffectsHealth");
+
+            DecreaseFatigue = settings.GetValue<bool>("Options", "DecreaseFatigue");
+            AllowDebuffAtt = settings.GetValue<bool>("Options", "AllowDebuffAtt");
+            CheckDrunk = settings.GetValue<bool>("Options", "CheckDrunk");
+            DrunkToleranceMultiplier = settings.GetValue<int>("Options", "DrunkToleranceMultiplier");
+
+            AllowFoodToRot = settings.GetValue<bool>("Options", "AllowFoodToRot");
+            RotRateMultiplier = settings.GetValue<int>("Options", "RotRateMultiplier");
+
+
+
+        }
         static public DaggerfallUnityItem[] NewRandomLoot(LootChanceMatrix matrix, PlayerEntity playerEntity)
         {
             List<DaggerfallUnityItem> items = new List<DaggerfallUnityItem>();
@@ -418,6 +456,26 @@ namespace ClimatesCalories
         static int fastTravelTime = 0;
 
         static uint currentTime;
+
+        public static bool ChanceSpawns { get; set; }
+        public static float SpawnLuckMultiplier { get; set; }
+        public static bool CheckHunger { get; set; }
+        public static int HungerMultiplier { get; set; }
+        public static bool PenalizeGroundSleep { get; set; }
+        public static bool CheckThirst { get; set; }
+        public static bool CheckTemp { get; set; }
+        public static bool ClothesDamageCheck { get; set; }
+        public static int ClothesDamageTimeMult { get; set; }
+        public static bool ArmorDamageCheck { get; set; }
+        public static int ArmorDamageTimeMult { get; set; }
+        public static bool NakedDamageCheck { get; set; }
+        public static bool FatiqueAffectsHealth { get; set; }
+        public static bool DecreaseFatigue { get; set; }
+        public static bool AllowDebuffAtt { get; set; }
+        public static bool CheckDrunk { get; set; }
+        public static int DrunkToleranceMultiplier { get; set; }
+        public static int RotRateMultiplier { get; set; }
+        public static bool AllowFoodToRot { get; set; }
 
         void Start()
         {
@@ -693,21 +751,27 @@ namespace ClimatesCalories
                 //When inside or camping, the counters reset faster and no temp effects are applied.
                 if (playerEnterExit.IsPlayerInsideBuilding || cooking || (playerEntity.IsResting && camping))
                 {
-                    if (camping || cooking)
+                    if ((camping || cooking) && (!ChanceSpawns || ChanceSpawns &&
+                            Dice100.SuccessRoll((int)(playerEntity.Stats.LiveLuck * SpawnLuckMultiplier))))
                     {
-                        if (Dice100.SuccessRoll(playerEntity.Stats.LiveLuck + 40))
-                            noSpawns = true;
+                        noSpawns = true;
                     }
+                    
                     txtCount = txtIntervals;
                     wetCount = Mathf.Max(wetCount - 2, 0);
                     attCount = Mathf.Max(attCount - 2, 0);
-                    TavernWindow.Drunk();
-                    Hunger.FoodRotCounter();
-                    Hunger.Starvation();
+                    if (CheckDrunk)
+                        TavernWindow.Drunk();
+                    if (AllowFoodToRot)
+                        Hunger.FoodRotCounter();
+                    if (CheckHunger)
+                        Hunger.Starvation();
                     Sleep.SleepCheck();
-                    debuffValue = (int)Hunger.starvDays * 2;
-                    DebuffAtt(debuffValue);
-
+                    if (CheckHunger && AllowDebuffAtt)
+                    {
+                        debuffValue = (int)Hunger.starvDays * 2 / HungerMultiplier;
+                        DebuffAtt(debuffValue);
+                    }
                     if (isVampire && playerEnterExit.IsPlayerInSunlight)
                         playerEntity.IncreaseHealth(1);
                 }
@@ -741,13 +805,15 @@ namespace ClimatesCalories
                 //Sleeping outside. I keep track of temp during sleep and apply effects when waking up.
                 else if (playerEntity.IsResting && !playerEntity.IsLoitering)
                 {
-                    if (!playerEnterExit.IsPlayerInside && Dice100.SuccessRoll(playerEntity.Stats.LiveLuck))
+                    if (!playerEnterExit.IsPlayerInside && (!ChanceSpawns || ChanceSpawns && Dice100.SuccessRoll((int)(playerEntity.Stats.LiveLuck * SpawnLuckMultiplier))))
                         noSpawns = true;
 
-                    TavernWindow.Drunk();
-                    Hunger.FoodRotCounter();
-                    Hunger.Starvation();
-
+                    if (CheckDrunk)
+                        TavernWindow.Drunk();
+                    if (AllowFoodToRot)
+                        Hunger.FoodRotCounter();
+                    if (CheckHunger)
+                        Hunger.Starvation();
                     txtCount = txtIntervals;
                     wetCount += wetWeather + wetEnvironment;
                     if (natTemp > 10)
@@ -770,24 +836,31 @@ namespace ClimatesCalories
                         }
                     }
                     Sleep.SleepCheck(sleepTemp);
-                    debuffValue = (int)Hunger.starvDays * 2;
-                    DebuffAtt(debuffValue);
-                }
+                    if (CheckHunger && AllowDebuffAtt)
+                    {
+                        debuffValue = (int)Hunger.starvDays * 2 / HungerMultiplier;
+                        DebuffAtt(debuffValue);
+                    }                }
                 //If not camping, bed sleeping or traveling, apply normal C&C effects.
                 else
                 {
                     isVampire = GameManager.Instance.PlayerEffectManager.HasVampirism();
-                    TavernWindow.Drunk();
-                    Hunger.FoodRotCounter();
-                    Hunger.FoodRotter();
-                    Hunger.Starvation();
+                    if (CheckDrunk)
+                        TavernWindow.Drunk();
+                    if (AllowFoodToRot)
+                    {
+                        Hunger.FoodRotCounter();
+                        Hunger.FoodRotter();
+                    }
+                    if (CheckHunger)
+                        Hunger.Starvation();
                     Sleep.SleepCheck();
 
                     playerIsWading = GameManager.Instance.PlayerMotor.OnExteriorWater == PlayerMotor.OnExteriorWaterMethod.Swimming;
                     int fatigueDmg = 0;
                     camping = false;
 
-                    if (groundSleep && !playerEntity.IsInBeastForm)
+                    if (groundSleep && !playerEntity.IsInBeastForm && PenalizeGroundSleep)
                     {
                         groundSleep = false;
                         sleepTemp *= 3;
@@ -820,7 +893,7 @@ namespace ClimatesCalories
                     }
                     txtCount++;
 
-                    if (!GameManager.IsGamePaused && !isVampire && !playerEntity.IsInBeastForm)
+                    if (!GameManager.IsGamePaused && !isVampire && !playerEntity.IsInBeastForm && CheckThirst)
                     {
                         thirst += Math.Min(Math.Max(totalTemp - 10, 1), 30);
                         if (thirst > 100 && Climates.gotDrink)
@@ -835,7 +908,7 @@ namespace ClimatesCalories
                     }
 
                     //Basic mod effect starts here at +/- 10+ by decreasing fatigue.
-                    if (absTemp > 10)
+                    if (CheckTemp && absTemp > 10)
                     {
                         fatigueDmg += absTemp / 20;
                         if (playerEntity.RaceTemplate.ID != (int)Races.Argonian)
@@ -857,14 +930,14 @@ namespace ClimatesCalories
                     }
 
                     //If hot or cold, clothing might get damaged
-                    if ((baseNatTemp > 10 || baseNatTemp < -10) && clothDmg)
+                    if (ClothesDamageCheck && (baseNatTemp > 10 * ClothesDamageTimeMult || baseNatTemp < -10 * ClothesDamageTimeMult) && clothDmg && UnityEngine.Random.Range(0, 100) <= 2)
                     {
                         int dmgRoll = UnityEngine.Random.Range(0, 100);
                         if (dmgRoll <= 2) { ClothDmg(); }
                     }
 
                     //If wet, armor might get damaged
-                    if (wetCount > 5)
+                    if (ArmorDamageCheck && wetCount > 5 * ArmorDamageTimeMult && UnityEngine.Random.Range(0, 100) < 5)
                     {
                         int dmgRoll = UnityEngine.Random.Range(0, 100);
                         if (dmgRoll < 5) { ArmorDmg(); }
@@ -883,7 +956,8 @@ namespace ClimatesCalories
                     }
 
                     //Apply damage for being naked or walking on foot.
-                    if (playerEntity.RaceTemplate.ID != (int)Races.Argonian && playerEntity.RaceTemplate.ID != (int)Races.Khajiit && !playerEntity.IsInBeastForm)
+                    if (NakedDamageCheck && playerEntity.RaceTemplate.ID != 8 && playerEntity.RaceTemplate.ID != 7 &&
+                        !playerEntity.IsInBeastForm)
                     {
                         NakedDmg(natTemp);
                         if (!playerIsWading && !GameManager.IsGamePaused && !playerEnterExit.IsPlayerInside)
@@ -893,7 +967,7 @@ namespace ClimatesCalories
                     }
 
                     //Displays toptext at intervals
-                    if (statusInterval && !playerEntity.IsInBeastForm)
+                    if (CheckTemp && statusInterval && !playerEntity.IsInBeastForm)
                     {
                         if (txtCount >= txtIntervals && GameManager.Instance.IsPlayerOnHUD)
                         {
@@ -904,16 +978,16 @@ namespace ClimatesCalories
                     if (txtCount >= txtIntervals) { txtCount = 0; }
 
                     //To counter a bug where you have 0 Stamina with no averse effects.
-                    if (playerEntity.CurrentFatigue <= 10)
+                    if (FatiqueAffectsHealth && playerEntity.CurrentFatigue <= 10)
                     {
                         playerEntity.DecreaseHealth(2);
                         if (!GameManager.IsGamePaused) { DaggerfallUI.AddHUDText("You are exhausted and need to rest..."); }
                     }
 
-                    if (!roadFollow && !pathFollow && !playerGPS.IsPlayerInLocationRect && !Hunting.HuntingTime && playerEntity.CurrentFatigue > 10)
+                    if (DecreaseFatigue && !roadFollow && !pathFollow && !playerGPS.IsPlayerInLocationRect && !Hunting.HuntingTime && playerEntity.CurrentFatigue > 10)
                         playerEntity.DecreaseFatigue(32);
 
-                    if (!Hunting.HuntingTime)
+                    if (DecreaseFatigue && !Hunting.HuntingTime)
                     {
                         playerEntity.DecreaseFatigue(fatigueDmg, true);
                         playerEntity.DecreaseMagicka(fatigueDmg);
@@ -926,24 +1000,36 @@ namespace ClimatesCalories
                         Hunger.starving = false;
                         Hunger.starvDays = 0;
                         resetValues = false;
-                        Debug.Log("starvDays" + Hunger.starvDays.ToString());
+ //                       Debug.Log("starvDays" + Hunger.starvDays.ToString());
                     }
-                    debuffValue = (int)Hunger.starvDays * 2;
 
-                    if (attCount > 0)
+                    if (CheckHunger && AllowDebuffAtt)
                     {
-                        int countOrTemp = Mathf.Min(absTemp - 30, attCount);
-                        int tempAttDebuff = Mathf.Max(0, countOrTemp);
-                        if (playerEntity.RaceTemplate.ID == (int)Races.Argonian)
+                        debuffValue = (int)Hunger.starvDays * 2 / HungerMultiplier;
+
+                        if (attCount > 0)
                         {
-                            if (absTemp > 50) { tempAttDebuff *= 2; }
-                            else { tempAttDebuff /= 2; }
+                            int countOrTemp = Mathf.Min(absTemp - 30, attCount);
+                            int tempAttDebuff = Mathf.Max(0, countOrTemp);
+                            if (playerEntity.RaceTemplate.ID == (int)Races.Argonian)
+                            {
+                                if (absTemp > 50)
+                                {
+                                    tempAttDebuff *= 2;
+                                }
+                                else
+                                {
+                                    tempAttDebuff /= 2;
+                                }
+                            }
+
+                            tempAttDebuff += (thirst / 100);
+                            debuffValue += tempAttDebuff;
                         }
-                        tempAttDebuff += (thirst / 100);
-                        debuffValue += tempAttDebuff;
+
+                        DebuffAtt(debuffValue);
                     }
 
-                    DebuffAtt(debuffValue);
                     Hunting.HuntingRound();
                     ModManager.Instance.SendModMessage("TravelOptions", "isTravelActive", null, (string message, object data) =>
                     {

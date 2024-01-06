@@ -1054,14 +1054,14 @@ namespace ClimatesCalories
             if (drunk > 0)
             {
                 drunkCounter++;
-                if (drunkCounter > 10)
+                if (drunkCounter > 10 / ClimateCalories.DrunkToleranceMultiplier)
                 {
                     drunkCounter = 0;
                     drunk--;
                 }
             }
 
-            if(drunk > playerEntity.Stats.LiveEndurance / 2)
+            if(drunk > playerEntity.Stats.LiveEndurance / 2 * ClimateCalories.DrunkToleranceMultiplier)
             {
                 EntityEffectManager playerEffectManager = GameManager.Instance.PlayerEntity.EntityBehaviour.GetComponent<EntityEffectManager>();
 

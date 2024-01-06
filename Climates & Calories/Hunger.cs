@@ -55,11 +55,11 @@ namespace ClimatesCalories
             starvDays = (hunger / 1440);
             starvCounter += (int)starvDays;
             rations = RationsToEat();
-            if (hunger > 240)
+            if (hunger > 240 * ClimateCalories.HungerMultiplier)
             {
                 hungry = true;
             }
-            if (starvDays >= 1)
+            if (starvDays >= 1 * ClimateCalories.HungerMultiplier)
             {
                 starving = true;
             }
@@ -204,7 +204,7 @@ namespace ClimatesCalories
                     rotCounter++;
             }
                 
-            if (rotCounter > 720)
+            if (rotCounter > 720 * ClimateCalories.RotRateMultiplier)
             {
                 rotCounter = 0;
                 daysRot++;
@@ -213,19 +213,20 @@ namespace ClimatesCalories
 
         public static void FoodEffects_OnNewMagicRound()
         {
-            if (hunger < 240)
+            if (hunger < 240 * ClimateCalories.HungerMultiplier)
             {
-                foodCount += (240 - (int)hunger);
+                foodCount += (240 - (int)hunger / ClimateCalories.HungerMultiplier);
                 if (foodCount >= 500)
                 {
                     playerEntity.IncreaseFatigue(1, true);
                     foodCount = 0;
                 }
             }
-            else if (!hungry && !ClimateCalories.isVampire)
+            else if (!hungry && !ClimateCalories.isVampire && hunger > 240 * ClimateCalories.HungerMultiplier /2)
             {
                 hungry = true;
-                DaggerfallUI.AddHUDText("Your stomach rumbles...");
+                if (hunger > 240 * ClimateCalories.HungerMultiplier) 
+                    DaggerfallUI.AddHUDText("Your stomach rumbles...");
                 ModManager.Instance.SendModMessage("TravelOptions", "pauseTravel");
                 Debug.Log("FoodEffects_OnNewMagicRound() stomache message displayed. hunger = " + hunger.ToString());
             }
