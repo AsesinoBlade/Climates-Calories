@@ -23,17 +23,12 @@ namespace ClimatesCalories
 
         #region UI Rects
 
-        Rect roomButtonRect = new Rect(5, 5, 120, 7);
-        Rect talkButtonRect = new Rect(5, 14, 120, 7);
-        Rect foodButtonRect = new Rect(5, 23, 120, 7);
-        Rect drinksButtonRect = new Rect(5, 32, 120, 7);
-        Rect exitButtonRect = new Rect(5, 41, 120, 7);
 
         #endregion
 
         #region UI Controls
+        Rect drinksButtonRect = new Rect(5, 32, 120, 7);
 
-        Panel mainPanel = new Panel();
         protected new Button foodButton;
         protected Button drinksButton;
         protected TextLabel roomLabel = new TextLabel();
@@ -78,6 +73,10 @@ namespace ClimatesCalories
         protected override void Setup()
         {
             //base.Setup();
+            roomButtonRect = new Rect(5, 5, 120, 7);
+            talkButtonRect = new Rect(5, 14, 120, 7);
+            foodButtonRect = new Rect(5, 23, 120, 7);
+            exitButtonRect = new Rect(5, 41, 120, 7);
 
             // Load all textures
             Texture2D tex;

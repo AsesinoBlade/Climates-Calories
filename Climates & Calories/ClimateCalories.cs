@@ -1030,12 +1030,15 @@ namespace ClimatesCalories
                         DebuffAtt(debuffValue);
                     }
 
-                    Hunting.HuntingRound();
                     ModManager.Instance.SendModMessage("TravelOptions", "isTravelActive", null, (string message, object data) =>
                     {
                         if ((bool)data && absTemp > absTempOld + 10)
                         {
                             ModManager.Instance.SendModMessage("TravelOptions", "showMessage", "The temperature shifted...");
+                        }
+                        else
+                        {
+                            Hunting.HuntingRound();
                         }
                     });
                     
