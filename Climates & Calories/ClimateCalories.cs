@@ -223,6 +223,25 @@ namespace ClimatesCalories
             itemHelper.RegisterCustomItem(ItemRawMeat.templateIndex, ItemGroups.UselessItems2, typeof(ItemRawMeat));
             itemHelper.RegisterCustomItem(ItemRations.templateIndex, ItemGroups.UselessItems2, typeof(ItemRations));
 
+            itemHelper.RegisterCustomItem(ItemCherries.templateIndex, ItemGroups.UselessItems2, typeof(ItemCherries));
+            itemHelper.RegisterCustomItem(ItemYellowPear.templateIndex, ItemGroups.UselessItems2, typeof(ItemYellowPear));
+            itemHelper.RegisterCustomItem(ItemPlum.templateIndex, ItemGroups.UselessItems2, typeof(ItemPlum));
+            itemHelper.RegisterCustomItem(ItemPeach.templateIndex, ItemGroups.UselessItems2, typeof(ItemPeach));
+            itemHelper.RegisterCustomItem(ItemOlives.templateIndex, ItemGroups.UselessItems2, typeof(ItemOlives));
+            itemHelper.RegisterCustomItem(ItemCheeseWheel.templateIndex, ItemGroups.UselessItems2, typeof(ItemCheeseWheel));
+            itemHelper.RegisterCustomItem(ItemNearlyFullCheeseWheel.templateIndex, ItemGroups.UselessItems2, typeof(ItemNearlyFullCheeseWheel));
+            itemHelper.RegisterCustomItem(ItemCheeseSlice.templateIndex, ItemGroups.UselessItems2, typeof(ItemCheeseSlice));
+            itemHelper.RegisterCustomItem(ItemSwissCheeseSlice.templateIndex, ItemGroups.UselessItems2, typeof(ItemSwissCheeseSlice));
+            itemHelper.RegisterCustomItem(ItemSwissCheeseWheel.templateIndex, ItemGroups.UselessItems2, typeof(ItemSwissCheeseWheel));
+            itemHelper.RegisterCustomItem(ItemSoftCheese.templateIndex, ItemGroups.UselessItems2, typeof(ItemSoftCheese));
+            itemHelper.RegisterCustomItem(ItemPigRoastPlatter.templateIndex, ItemGroups.UselessItems2, typeof(ItemPigRoastPlatter));
+            itemHelper.RegisterCustomItem(ItemFlourPorridge.templateIndex, ItemGroups.UselessItems2, typeof(ItemFlourPorridge));
+            itemHelper.RegisterCustomItem(ItemBroth.templateIndex, ItemGroups.UselessItems2, typeof(ItemBroth));
+            itemHelper.RegisterCustomItem(ItemGrapes.templateIndex, ItemGroups.UselessItems2, typeof(ItemGrapes));
+            itemHelper.RegisterCustomItem(ItemWhiteGrapes.templateIndex, ItemGroups.UselessItems2, typeof(ItemWhiteGrapes));
+            itemHelper.RegisterCustomItem(ItemCabbageHead.templateIndex, ItemGroups.UselessItems2, typeof(ItemCabbageHead));
+            itemHelper.RegisterCustomItem(ItemYellowTomato.templateIndex, ItemGroups.UselessItems2, typeof(ItemYellowTomato));
+
             itemHelper.RegisterItemUseHandler(templateIndex_CampEquip, Camping.UseCampEquip);
             itemHelper.RegisterCustomItem(templateIndex_CampEquip, ItemGroups.UselessItems2);
             itemHelper.RegisterCustomItem(templateIndex_Waterskin, ItemGroups.UselessItems2);
