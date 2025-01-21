@@ -123,7 +123,7 @@ namespace ClimatesCalories
                 {
                     playerEntity.LastTimePlayerAteOrDrankAtTavern = gameMinutes - 240;
                 }
-                playerEntity.LastTimePlayerAteOrDrankAtTavern += cals;
+                playerEntity.LastTimePlayerAteOrDrankAtTavern += cals * (uint)ClimateCalories.HungerMultiplier;
 
                 collection.RemoveItem(this);
                 DaggerfallUI.MessageBox(string.Format("You eat the {0}.", shortName));

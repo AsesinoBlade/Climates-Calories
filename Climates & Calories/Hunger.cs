@@ -51,7 +51,8 @@ namespace ClimatesCalories
                 ateTime = gameMinutes - 250;
             else
                 ateTime = GameManager.Instance.PlayerEntity.LastTimePlayerAteOrDrankAtTavern;
-            hunger = gameMinutes - ateTime;
+
+            hunger = gameMinutes > ateTime ? gameMinutes - ateTime : 0;
             starvDays = (hunger / 1440);
             starvCounter += (int)starvDays;
             rations = RationsToEat();
