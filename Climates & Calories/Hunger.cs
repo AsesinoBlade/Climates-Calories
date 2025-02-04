@@ -149,7 +149,7 @@ namespace ClimatesCalories
             return false;
         }
 
-        static public void FoodRot(int rotBonus = 0)
+        public static void FoodRot(int rotBonus = 0)
         {
             bool rotted = false;
             int rotChance = 0;
@@ -161,7 +161,11 @@ namespace ClimatesCalories
                     if (item is AbstractItemFood)
                     {
                         rotChance = UnityEngine.Random.Range(1, 100) + (rotBonus / 2);
+                        
                         AbstractItemFood food = item as AbstractItemFood;
+                        if (food.CannotSpoil)
+                            continue;
+                        
                         if (rotChance > food.maxCondition && !food.RotFood())
                         {
                             food.RotFood();

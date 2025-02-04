@@ -25,7 +25,7 @@ namespace ClimatesCalories
         public const int StatusMouldy = 2;
         public const int StatusRotten = 3;
         public const int StatusPutrid = 4;
-        protected virtual bool CanSpoil { get; set; } = false;
+        public virtual bool CannotSpoil { get; set; } = false;
 
         public AbstractItemFood(ItemGroups itemGroup, int templateIndex) : base(itemGroup, templateIndex)
         {
@@ -95,12 +95,18 @@ namespace ClimatesCalories
 
         public bool RotFood()
         {
+            if (CannotSpoil)
+                return true;
+            
             if (FoodStatus < StatusPutrid)
             {
-                FoodStatus++;
-                shortName = GetFoodStatus() + ItemTemplate.name;
-                value = 0;
-                return false;
+                if (Dice100.FailedRoll(50))
+                {
+                    FoodStatus++;
+                    shortName = GetFoodStatus() + ItemTemplate.name;
+                    value = 0;
+                    return false;
+                }
             }
             return true;
         }
@@ -364,6 +370,7 @@ namespace ClimatesCalories
     {
         public const int templateIndex = ClimateCalories.templateIndex_Rations;
 
+
         public ItemRations() : base(ItemGroups.UselessItems2, templateIndex)
         {
             stackCount = UnityEngine.Random.Range(2, 10);
@@ -525,6 +532,7 @@ namespace ClimatesCalories
     public class ItemOlives : AbstractItemFood
     {
         public const int templateIndex = 102104;
+        public override bool CannotSpoil { get; set; } = true;
 
         public ItemOlives() : base(ItemGroups.UselessItems2, templateIndex)
         {
@@ -558,6 +566,7 @@ namespace ClimatesCalories
     public class ItemCheeseWheel : AbstractItemFood
     {
         public const int templateIndex = 102105;
+        public override bool CannotSpoil { get; set; } = true;
 
         public ItemCheeseWheel() : base(ItemGroups.UselessItems2, templateIndex)
         {
@@ -591,6 +600,7 @@ namespace ClimatesCalories
     public class ItemNearlyFullCheeseWheel : AbstractItemFood
     {
         public const int templateIndex = 102106;
+        public override bool CannotSpoil { get; set; } = true;
 
         public ItemNearlyFullCheeseWheel() : base(ItemGroups.UselessItems2, templateIndex)
         {
@@ -624,6 +634,7 @@ namespace ClimatesCalories
     public class ItemCheeseSlice : AbstractItemFood
     {
         public const int templateIndex = 102107;
+        public override bool CannotSpoil { get; set; } = true;
 
         public ItemCheeseSlice() : base(ItemGroups.UselessItems2, templateIndex)
         {
@@ -657,6 +668,7 @@ namespace ClimatesCalories
     public class ItemSwissCheeseSlice : AbstractItemFood
     {
         public const int templateIndex = 102108;
+        public override bool CannotSpoil { get; set; } = true;
 
         public ItemSwissCheeseSlice() : base(ItemGroups.UselessItems2, templateIndex)
         {
@@ -690,6 +702,7 @@ namespace ClimatesCalories
     public class ItemSwissCheeseWheel: AbstractItemFood
     {
         public const int templateIndex = 102109;
+        public override bool CannotSpoil { get; set; } = true;
 
         public ItemSwissCheeseWheel() : base(ItemGroups.UselessItems2, templateIndex)
         {
@@ -723,6 +736,7 @@ namespace ClimatesCalories
     public class ItemSoftCheese : AbstractItemFood
     {
         public const int templateIndex = 102110;
+        public override bool CannotSpoil { get; set; } = true;
 
         public ItemSoftCheese() : base(ItemGroups.UselessItems2, templateIndex)
         {
@@ -756,6 +770,7 @@ namespace ClimatesCalories
     public class ItemPigRoastPlatter : AbstractItemFood
     {
         public const int templateIndex = 102111;
+        public override bool CannotSpoil { get; set; } = true;
 
         public ItemPigRoastPlatter() : base(ItemGroups.UselessItems2, templateIndex)
         {
@@ -789,6 +804,7 @@ namespace ClimatesCalories
     public class ItemFlourPorridge : AbstractItemFood
     {
         public const int templateIndex = 102112;
+        public override bool CannotSpoil { get; set; } = true;
 
         public ItemFlourPorridge() : base(ItemGroups.UselessItems2, templateIndex)
         {
@@ -822,6 +838,7 @@ namespace ClimatesCalories
     public class ItemBroth : AbstractItemFood
     {
         public const int templateIndex = 102113;
+        public override bool CannotSpoil { get; set; } = true;
 
         public ItemBroth() : base(ItemGroups.UselessItems2, templateIndex)
         {
@@ -855,6 +872,7 @@ namespace ClimatesCalories
     public class ItemGrapes : AbstractItemFood
     {
         public const int templateIndex = 102114;
+        public override bool CannotSpoil { get; set; } = true;
 
         public ItemGrapes() : base(ItemGroups.UselessItems2, templateIndex)
         {
@@ -888,6 +906,7 @@ namespace ClimatesCalories
     public class ItemWhiteGrapes : AbstractItemFood
     {
         public const int templateIndex = 102115;
+        public override bool CannotSpoil { get; set; } = true;
 
         public ItemWhiteGrapes() : base(ItemGroups.UselessItems2, templateIndex)
         {
