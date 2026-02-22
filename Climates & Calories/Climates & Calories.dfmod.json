@@ -51,41 +51,5 @@
         "Assets/Game/Mods/Climates-Calories/modsettings.json"
     ],
     "ModPreCompile": true,
-    "Dependencies": [
-        {
-            "Name": "roleplayrealism",
-            "IsOptional": false,
-            "IsPeer": false,
-            "Version": "1.4.2"
-        },
-        {
-            "Name": "filling food",
-            "IsOptional": true,
-            "IsPeer": true,
-            "Version": "1.3.0"
-        },
-        {
-            "Name": "climates & cloaks",
-            "IsOptional": true,
-            "IsPeer": true,
-            "Version": "1.3.0"
-        },
-        {
-            "Name": "traveloptionsadjusted",
-            "IsOptional": false,
-            "IsPeer": false
-        },
-        {
-            "Name": "roleplayrealism-items",
-            "IsOptional": false,
-            "IsPeer": false,
-            "Version": "1.0.1"
-        },
-        {
-            "Name": "ironman options",
-            "IsOptional": true,
-            "IsPeer": false,
-            "Version": "1.2.3"
-        }
-    ]
+    "ModPatch": false
 }
