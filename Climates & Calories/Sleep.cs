@@ -59,27 +59,34 @@ namespace ClimatesCalories
             {
                 awake = true;
                 wakeOrSleepTime = currentTime;
-                if (sleepyCounter > 0)
-                    DaggerfallUI.AddHUDText("You need more rest...");
+
                 int qualityPenalty = 10;
                 if (playerEnterExit.IsPlayerInsideBuilding)
                 {
                     int quality = (int)playerEnterExit.Interior.BuildingData.Quality;
                     qualityPenalty -= quality;
                     if (quality < 6)
-                        DaggerfallUI.AddHUDText("You slept poorly.");
+                        DaggerfallUI.AddHUDText("You slept poorly."); 
                     if (quality > 14)
                         DaggerfallUI.AddHUDText("Your rest was excellent.");
+                    sleepyCounter = 0;
+
                 }
                 else if (!campSleep)
                 {
                     qualityPenalty = 20;
                     DaggerfallUI.AddHUDText("You slept very poorly.");
+                    sleepyCounter /= 2;
                 }
+                else
+                    sleepyCounter = 0;
+
+                if (sleepyCounter > 0)
+                    DaggerfallUI.AddHUDText("You need more rest...");
                 campSleep = false;    
                 sleepyCounter += qualityPenalty;
             }
-           // Debug.Log("[Climates & Calories] NotResting()");
+            // Debug.Log("[Climates & Calories] NotResting()");
             gameMinutes = currentTime;
             awakeOrAsleepHours = (gameMinutes - wakeOrSleepTime) / 60;
             sleepyCounter += Mathf.Max((int)(awakeOrAsleepHours - 6) / 6, 0);
